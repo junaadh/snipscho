@@ -1,4 +1,5 @@
 #include "lsp.h"
+#include <ctype.h>
 #include <jansson.h>
 #include <stddef.h>
 #include <stdio.h>
@@ -25,23 +26,50 @@ Lang get_lang_value(const char *lang_name) {
   return null;
 }
 
-char *sub_str(const char *format, const char *val) {
-  const char *placeholder = strstr(format, "%s");
+char *to_upper_first(const char *str) {
+  char *res = strdup(str);
+  if (str != NULL && *str != '\0') {
+    res[0] = toupper((unsigned char)res[0]);
+    return res;
+  } else {
+    return res;
+  }
+}
+
+char *sub_str(const char *format, const char *term, const char *val) {
+  const char *placeholder = strstr(format, term);
   if (placeholder == NULL) {
     return strdup(format);
   }
 
-  size_t resultlen = strlen(format) - 2 + strlen(val) + 1;
+  size_t resultlen = strlen(format) - strlen(term) + strlen(val) + 1;
   char *result = (char *)malloc(resultlen);
 
   strncpy(result, format, placeholder - format);
   result[placeholder - format] = '\0';
   strcat(result, val);
-  strcat(result, placeholder + 2);
+  strcat(result, placeholder + strlen(term));
   return result;
 }
 
-void parse_json(Lang language, const char *snippet_name, const char *value) {
+char *format(const char *format, const char *val1, const char *val2) {
+  char *result = strdup(format);
+  char *term_arr[] = {"#term1", "#term2", "#TERM1", "#TERM2"};
+
+  result = sub_str(result, term_arr[0], val1);
+  result = sub_str(result, term_arr[1], val2);
+
+  val1 = to_upper_first(val1);
+  val2 = to_upper_first(val2);
+
+  result = sub_str(result, term_arr[2], val1);
+  result = sub_str(result, term_arr[3], val2);
+
+  return result;
+}
+
+void parse_json(Lang language, const char *snippet_name, const char *value1,
+                const char *value2) {
   const char *path = expand_path(json_file_paths[language]);
 
   FILE *file = fopen(path, "r");
@@ -88,7 +116,7 @@ void parse_json(Lang language, const char *snippet_name, const char *value) {
         // printf("%s\n%s\n", name, body);
         // ++snippets_found;
         if (name != NULL && strcmp(name, snippet_name) == 0) {
-          const char *subbed = sub_str(body, value);
+          const char *subbed = format(body, value1, value2);
           printf("%s", subbed);
         }
       }
@@ -97,13 +125,16 @@ void parse_json(Lang language, const char *snippet_name, const char *value) {
 }
 
 int main(int argc, char *argv[]) {
+  // printf("%s\n", to_upper_first(argv[1]));
+  // return 0;
   if (argc < 3) {
     exit(1);
   }
 
   const char *lang = argv[1];
   const char *snippet = argv[2];
-  const char *input = argc >= 4 ? argv[3] : " ";
+  const char *input1 = argc >= 4 ? argv[3] : " ";
+  const char *input2 = argc >= 5 ? argv[4] : " ";
   // printf("%s\n%s\n%s\n", lang, snippet, input);
   Lang language_enum = get_lang_value(lang);
   // if (language_enum == null) {
@@ -115,7 +146,7 @@ int main(int argc, char *argv[]) {
 
   // const char *path = expand_path(json_file_paths[language_enum]);
   // printf("%s\n%s\n", path, expand_path(path));
-  parse_json(language_enum, snippet, input);
+  parse_json(language_enum, snippet, input1, input2);
 
   return 0;
 }

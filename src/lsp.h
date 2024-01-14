@@ -24,7 +24,10 @@ typedef struct {
 } Snippet;
 
 Lang get_lang_value(const char *lang_name);
-void parse_json(Lang language, const char *snippet_name, const char *value);
-char *sub_str(const char *format, const char *val);
+void parse_json(Lang language, const char *snippet_name, const char *val1,
+                const char *val2);
+char *to_upper_first(const char *str);
+char *sub_str(const char *format, const char *term, const char *val);
+char *format(const char *format, const char *val1, const char *val2);
 
 #endif
