@@ -40,6 +40,17 @@ char *to_lower(const char *str) {
   return res;
 }
 
+char *to_upper(const char *str) {
+  char *res = strdup(str);
+  if (res != NULL) {
+    for (int i = 0; res[i] != '\0'; ++i) {
+      res[i] = toupper((unsigned char)res[i]);
+    }
+    return res;
+  }
+  return res;
+}
+
 // capitalize first letter
 char *to_upper_first(const char *str) {
   char *res = strdup(str);
@@ -73,25 +84,25 @@ char *sub_str(const char *format, const char *term, const char *val) {
 }
 
 // format string
-char *format(const char *format, const char *val1, const char *val2) {
+char *format(const char *format, const char **inputs) {
   char *result = strdup(format);
-  char *term_arr[] = {"#term1", "#term2", "#TERM1", "#TERM2"};
+  char *simp[] = {"#term1", "#term2", "#term3"};
+  char *fcap[] = {"#Term1", "#Term2", "#Term3"};
+  char *caps[] = {"#TERM1", "#TERM2", "#TERM3"};
 
-  result = sub_str(result, term_arr[0], val1);
-  result = sub_str(result, term_arr[1], val2);
-
-  val1 = to_upper_first(val1);
-  val2 = to_upper_first(val2);
-
-  result = sub_str(result, term_arr[2], val1);
-  result = sub_str(result, term_arr[3], val2);
+  for (size_t i = 0; i < 3; ++i) {
+    result = sub_str(result, simp[i], inputs[i]);
+    inputs[i] = to_upper_first(inputs[i]);
+    result = sub_str(result, fcap[i], inputs[i]);
+    inputs[i] = to_upper(inputs[i]);
+    result = sub_str(result, caps[i], inputs[i]);
+  }
 
   return result;
 }
 
 // parse json
-void parse_json(Lang language, const char *snippet_name, const char *value1,
-                const char *value2) {
+void parse_json(Lang language, const char *snippet_name, const char **inputs) {
   const char *path = expand_path(json_file_paths[language]);
 
   FILE *file = fopen(path, "r");
@@ -139,7 +150,7 @@ void parse_json(Lang language, const char *snippet_name, const char *value1,
         // // printf("%s\n%s\n", name, body);
         // // ++snippets_found;
         if (name != NULL && strcmp(name, snippet_name) == 0) {
-          const char *subbed = format(body, value1, value2);
+          const char *subbed = format(body, inputs);
           printf("%s", subbed);
         }
       }
@@ -148,7 +159,7 @@ void parse_json(Lang language, const char *snippet_name, const char *value1,
 }
 
 int main(int argc, char *argv[]) {
-  // printf("%s\n", to_upper_first(argv[1]));
+  // printf("%s\n", to_upper(argv[1]));
   // return 0;
   if (argc < 3) {
     exit(1);
@@ -156,8 +167,18 @@ int main(int argc, char *argv[]) {
 
   const char *lang = to_lower(argv[1]);
   const char *snippet = to_lower(argv[2]);
-  const char *input1 = argc >= 4 ? argv[3] : "#1";
-  const char *input2 = argc >= 5 ? argv[4] : "#2";
+  const char *inputs[3] = {"#1", "#2", "#3"};
+  switch (argc) {
+  case 6:
+    inputs[2] = argv[5];
+  case 5:
+    inputs[1] = argv[4];
+  case 4:
+    inputs[0] = argv[3];
+    break;
+  default:
+    break;
+  }
   // printf("%s\n%s\n%s\n%s\n", lang, snippet, input1, input2);
   // return 0;
 
@@ -168,7 +189,7 @@ int main(int argc, char *argv[]) {
 
   // const char *path = expand_path(json_file_paths[language_enum]);
   // printf("%s\n%s\n", path, expand_path(path));
-  parse_json(language_enum, snippet, input1, input2);
+  parse_json(language_enum, snippet, inputs);
 
   return 0;
 }

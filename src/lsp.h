@@ -36,10 +36,8 @@ Lang get_lang_value(const char *lang_name);
 // parse json file of snippets
 // @language = enum value of language input by user
 // @snippet_name = snippet name or argv[2]
-// @val1 = the first value or argv[3]
-// @val2 = the second value or argv[4]
-void parse_json(Lang language, const char *snippet_name, const char *val1,
-                const char *val2);
+// @inputs = array of inputs or defaults
+void parse_json(Lang language, const char *snippet_name, const char **inputs);
 
 // capitalize first letter of word
 // @str = string to capitalie
@@ -53,8 +51,7 @@ char *sub_str(const char *format, const char *term, const char *val);
 
 // format snippet body
 // @format = string which is to be modified
-// @val1 = string which contains first user input
-// @val2 = string which contains second user input
-char *format(const char *format, const char *val1, const char *val2);
+// @inputs = array of inputs or defaults
+char *format(const char *format, const char **inputs);
 
 #endif
