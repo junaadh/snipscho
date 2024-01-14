@@ -1,11 +1,16 @@
 # snipscho 
-## adding easier snippets to helix
+  - adding easier snippets to helix
 
-USAGE:
-  snipscho <language> <snippet_name> [value]
+## USAGE:
+  ```snipscho <language> <snippet_name> <value>?```
   _value is optional and defaults to " "_
-  
-BUILD:
+
+  * in helix
+    - `!snipscho <language> <snippet_name> <value>?`
+
+  * should work with any editor allowing stdout to be piped to buffer
+   
+## BUILD:
   ```
     git clone https://github.com/junaadh/snipscho.git
     cd snipscho
@@ -13,7 +18,7 @@ BUILD:
     cp ./build/snipscho ~/.local/bin
   ```
 
-SNIPPETS:
+## SNIPPETS:
   - snipscho looks for snippets within `$HOME/.config/snips/`
   - snippets need to be in json format with name scheme being `<language>.json`
   - json needs to be formatted as: snippets array with snippet object. Object containing name, body
