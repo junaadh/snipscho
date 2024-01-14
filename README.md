@@ -9,7 +9,8 @@
 
 ## USAGE:
   ```snipscho <language> <snippet_name> <value1>? <value2>?```      
-    _value is optional and defaults to " "_
+    _value is optional and defaults to #1 and #2_      
+    _therefore in hx can s;Enter;di and edit field_
 
   * in helix
     - `!snipscho <language> <snippet_name> <value1>? <value2>`

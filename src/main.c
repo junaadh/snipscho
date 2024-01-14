@@ -156,8 +156,8 @@ int main(int argc, char *argv[]) {
 
   const char *lang = to_lower(argv[1]);
   const char *snippet = to_lower(argv[2]);
-  const char *input1 = argc >= 4 ? argv[3] : " ";
-  const char *input2 = argc >= 5 ? argv[4] : " ";
+  const char *input1 = argc >= 4 ? argv[3] : "#1";
+  const char *input2 = argc >= 5 ? argv[4] : "#2";
   // printf("%s\n%s\n%s\n%s\n", lang, snippet, input1, input2);
   // return 0;
 
