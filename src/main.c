@@ -7,14 +7,17 @@
 #include <string.h>
 #include <wordexp.h>
 
+// length of language string array gives number of languages
 #define len GET_LEN(lang_arr)
 
+// expand $HOME as on terminal
 char *expand_path(const char *path) {
   wordexp_t res;
   wordexp(path, &res, 0);
   return res.we_wordv[0];
 }
 
+// get enum member corresponding to string input
 Lang get_lang_value(const char *lang_name) {
   const char **lang = lang_arr;
   for (size_t i = 0; i < len; ++i) {
@@ -26,6 +29,18 @@ Lang get_lang_value(const char *lang_name) {
   return null;
 }
 
+char *to_lower(const char *str) {
+  char *res = strdup(str);
+  if (res != NULL) {
+    for (int i = 0; res[i] != '\0'; ++i) {
+      res[i] = tolower((unsigned char)res[i]);
+    }
+    return res;
+  }
+  return res;
+}
+
+// capitalize first letter
 char *to_upper_first(const char *str) {
   char *res = strdup(str);
   if (str != NULL && *str != '\0') {
@@ -36,6 +51,7 @@ char *to_upper_first(const char *str) {
   }
 }
 
+// substitute string
 char *sub_str(const char *format, const char *term, const char *val) {
   const char *placeholder = strstr(format, term);
   if (placeholder == NULL) {
@@ -52,6 +68,7 @@ char *sub_str(const char *format, const char *term, const char *val) {
   return result;
 }
 
+// format string
 char *format(const char *format, const char *val1, const char *val2) {
   char *result = strdup(format);
   char *term_arr[] = {"#term1", "#term2", "#TERM1", "#TERM2"};
@@ -68,6 +85,7 @@ char *format(const char *format, const char *val1, const char *val2) {
   return result;
 }
 
+// parse json
 void parse_json(Lang language, const char *snippet_name, const char *value1,
                 const char *value2) {
   const char *path = expand_path(json_file_paths[language]);
@@ -103,18 +121,19 @@ void parse_json(Lang language, const char *snippet_name, const char *value1,
     exit(5);
   }
 
-  // int snippets_found = 0;
+  // size_t snippets_found = 0;
   json_t *snippets_array = json_object_get(root, "snippets");
   if (json_is_array(snippets_array)) {
     size_t array_size = json_array_size(snippets_array);
     for (size_t i = 0; i < array_size; ++i) {
       json_t *snippet = json_array_get(snippets_array, i);
       if (json_is_object(snippet)) {
-        const char *name = json_string_value(json_object_get(snippet, "name"));
+        // ++i;
+        const char *name =
+            to_lower(json_string_value(json_object_get(snippet, "name")));
         const char *body = json_string_value(json_object_get(snippet, "body"));
-
-        // printf("%s\n%s\n", name, body);
-        // ++snippets_found;
+        // // printf("%s\n%s\n", name, body);
+        // // ++snippets_found;
         if (name != NULL && strcmp(name, snippet_name) == 0) {
           const char *subbed = format(body, value1, value2);
           printf("%s", subbed);
@@ -131,15 +150,14 @@ int main(int argc, char *argv[]) {
     exit(1);
   }
 
-  const char *lang = argv[1];
-  const char *snippet = argv[2];
+  const char *lang = to_lower(argv[1]);
+  const char *snippet = to_lower(argv[2]);
   const char *input1 = argc >= 4 ? argv[3] : " ";
   const char *input2 = argc >= 5 ? argv[4] : " ";
-  // printf("%s\n%s\n%s\n", lang, snippet, input);
+  // printf("%s\n%s\n%s\n%s\n", lang, snippet, input1, input2);
+  // return 0;
+
   Lang language_enum = get_lang_value(lang);
-  // if (language_enum == null) {
-  //   exit(2);
-  // }
   if (language_enum == null) {
     exit(2);
   }
