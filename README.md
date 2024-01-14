@@ -2,10 +2,10 @@
   - adding easier snippets to helix
 
   ## currently configured languages
-    - [x] c 
-    - [] cpp 
-    - [x] react
-    - [] rust
+  - [x] c 
+  - [ ] cpp 
+  - [x] react
+  - [ ] rust
 
 ## USAGE:
   ```snipscho <language> <snippet_name> <value1>? <value2>? <value3>?```      
@@ -35,4 +35,14 @@
   - snipscho also looks for #TERM1, #TERM2 and #TERM3 and substitutes them witth value 1 2 and 3, but with whole word capitalized
   - newly added support for #Term1, #Term2 and #Term3, will be substituted by value 1 2 and 3 with first letter capitalized
   - language and snippet_name input is case insensitive as well as json snippet names
+
+## ERROR CODES
+  - snipscho doesnt output any diagnostics text to stderr or stdout
+  - it uses exit codes
+  - exit code 0 for success
+  - exit code 1 means require more arguments
+  - exit code 2 means input language is not configured
+  - exit code 3 means error opening file
+  - exit code 4 means error reading file
+  - exit code 5 means error parsing json
 
