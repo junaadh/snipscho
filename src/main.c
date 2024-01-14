@@ -65,7 +65,11 @@ char *sub_str(const char *format, const char *term, const char *val) {
   result[placeholder - format] = '\0';
   strcat(result, val);
   strcat(result, placeholder + strlen(term));
-  return result;
+
+  char *tmp = sub_str(result, term, val);
+  // strcat(result, tmp);
+  free(result);
+  return tmp;
 }
 
 // format string
