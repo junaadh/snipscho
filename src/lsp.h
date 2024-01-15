@@ -4,8 +4,10 @@
 #include <stddef.h>
 // define languages
 #define LANG_NAMES(LANG)                                                       \
+  LANG(bash)                                                                   \
   LANG(c)                                                                      \
   LANG(cpp)                                                                    \
+  LANG(java)                                                                   \
   LANG(react)                                                                  \
   LANG(rust)                                                                   \
   LANG(null)
@@ -37,7 +39,7 @@ Lang get_lang_value(const char *lang_name);
 // @language = enum value of language input by user
 // @snippet_name = snippet name or argv[2]
 // @inputs = array of inputs or defaults
-void parse_json(Lang language, const char *snippet_name, const char **inputs);
+void parse_json(Lang language, const char *snippet_name, char **inputs);
 
 // capitalize first letter of word
 // @str = string to capitalie
@@ -47,11 +49,11 @@ char *to_upper_first(const char *str);
 // @format = string which is to be be modified
 // @term = string which is the value which is deleted
 // @val = string which is the value which get inserted
-char *sub_str(const char *format, const char *term, const char *val);
+char *sub_str(const char *format, char *term, const char *val);
 
 // format snippet body
 // @format = string which is to be modified
 // @inputs = array of inputs or defaults
-char *format(const char *format, const char **inputs);
+char *format(const char *format, char **inputs);
 
 #endif

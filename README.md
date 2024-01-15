@@ -2,8 +2,10 @@
   - adding easier snippets to helix
 
   ## currently configured languages
+  - [ ] bash 
   - [x] c 
   - [ ] cpp 
+  - [ ] java 
   - [x] react
   - [ ] rust
 
