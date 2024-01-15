@@ -105,8 +105,7 @@ char *format(const char *format, char **inputs) {
   return result;
 }
 
-// parse json
-void parse_json(Lang language, const char *snippet_name, char **inputs) {
+json_t *read_file(Lang language) {
   const char *path = expand_path(json_file_paths[language]);
 
   FILE *file = fopen(path, "r");
@@ -129,9 +128,6 @@ void parse_json(Lang language, const char *snippet_name, char **inputs) {
   fread(json_content, 1, file_size, file);
   fclose(file);
   json_content[file_size] = '\0';
-
-  // printf("%s", json_content);
-
   json_error_t error;
   json_t *root = json_loads(json_content, 0, &error);
   if (!root) {
@@ -139,6 +135,13 @@ void parse_json(Lang language, const char *snippet_name, char **inputs) {
     free((void *)path);
     exit(5);
   }
+  return root;
+}
+
+// parse json
+void parse_json(json_t *root, const char *snippet_name, char **inputs) {
+
+  // printf("%s", json_content);
 
   // size_t snippets_found = 0;
   json_t *snippets_array = json_object_get(root, "snippets");
@@ -177,7 +180,8 @@ int main(int argc, char *argv[]) {
     exit(2);
   }
 
-  parse_json(language_enum, to_lower(inputs[1]), inputs + 2);
+  json_t *json_content = read_file(language_enum);
+  parse_json(json_content, to_lower(inputs[1]), inputs + 2);
 
   return 0;
 }

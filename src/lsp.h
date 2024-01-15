@@ -1,6 +1,7 @@
 #ifndef LSP_H_
 #define LSP_H_
 
+#include <jansson.h>
 #include <stddef.h>
 // define languages
 #define LANG_NAMES(LANG)                                                       \
@@ -35,15 +36,22 @@ typedef struct {
 // @lang_name = language name from argv[1]
 Lang get_lang_value(const char *lang_name);
 
-// parse json file of snippets
-// @language = enum value of language input by user
-// @snippet_name = snippet name or argv[2]
-// @inputs = array of inputs or defaults
-void parse_json(Lang language, const char *snippet_name, char **inputs);
+// converts word to lowercase
+// @str = string to be converted to lower case
+char *to_lower(const char *str);
+
+// converts word to uppercase
+// @str = string to be converted to uppercase
+char *to_upper(const char *str);
 
 // capitalize first letter of word
 // @str = string to capitalie
 char *to_upper_first(const char *str);
+
+// capitalize letter of word with offset
+// @str = string to capitalie
+// @offset = ofset from start of str
+char *to_upper_offset(const char *str, size_t offset);
 
 // word substitution
 // @format = string which is to be be modified
@@ -55,5 +63,15 @@ char *sub_str(const char *format, char *term, const char *val);
 // @format = string which is to be modified
 // @inputs = array of inputs or defaults
 char *format(const char *format, char **inputs);
+
+// read file and opens content
+// @language = enum value of language input by user
+json_t *read_file(Lang language);
+
+// parse json file of snippets
+// @root = jsom_t value from read_file
+// @snippet_name = snippet name or argv[2]
+// @inputs = array of inputs or defaults
+void parse_json(json_t *root, const char *snippet_name, char **inputs);
 
 #endif
